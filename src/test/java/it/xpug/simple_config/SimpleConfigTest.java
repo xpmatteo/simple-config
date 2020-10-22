@@ -82,7 +82,7 @@ class SimpleConfigTest {
     @Test
     void progressivelyRefinePropertySet() throws Exception {
         simpleConfig.load(Map.of("a", "b"));
-        
+
         simpleConfig.load(configSource -> Map.of("c", configSource.get("a")));
 
         assertThat(simpleConfig.get("c")).isEqualTo("b");
