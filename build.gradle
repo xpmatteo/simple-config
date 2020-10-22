@@ -18,10 +18,10 @@ dependencies {
     testImplementation "org.assertj:assertj-core:3.15.0"
     testImplementation 'org.mockito:mockito-core:3.5.13'
 
-    compileOnly "org.projectlombok:lombok:${lombokVersion}"
-    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
-    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+//    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+//    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+//    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+//    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }
 
 test {
