@@ -68,6 +68,7 @@ public class SimpleConfig implements ConfigSource {
     }
 
     public SimpleConfig load(Function<ConfigSource, Map<String, String>> refinement) {
+        load(refinement.apply(this));
         return this;
     }
 
