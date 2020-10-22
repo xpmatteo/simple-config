@@ -1,0 +1,29 @@
+plugins {
+    // Apply the java-library plugin to add support for Java Library
+    id 'java-library'
+}
+
+repositories {
+    jcenter()
+}
+
+def lombokVersion = "1.18.12"
+def junitVersion = "5.6.2"
+dependencies {
+    // This dependency is exported to consumers, that is to say found on their compile classpath.
+//    api 'org.apache.commons:commons-math3:3.6.1'
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+    testImplementation "org.assertj:assertj-core:3.15.0"
+    testImplementation 'org.mockito:mockito-core:3.5.13'
+
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+}
+
+test {
+    useJUnitPlatform()
+}
