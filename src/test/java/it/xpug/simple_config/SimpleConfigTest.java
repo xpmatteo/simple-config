@@ -8,10 +8,12 @@ import org.junit.jupiter.api.Test;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class LibraryTest {
+class SimpleConfigTest {
 
     private static final Path APP_PROPERTIES = Paths.get(System.getProperty("user.dir"), "fixture", "application.properties");
     private SimpleConfig simpleConfig = new SimpleConfig();
@@ -25,7 +27,17 @@ class LibraryTest {
 
     @Test
     void getWillNeverReturnNull() throws Exception {
+        assertThatThrownBy(() -> simpleConfig.get("nonexistent")).hasMessage("No property \"nonexistent\" found");
+    }
 
+    @Test
+    void defaultValues() throws Exception {
+        simpleConfig.load(APP_PROPERTIES);
+
+        assertThat(simpleConfig.get("foo.bar", "defaultValue")).isEqualTo("baz");
+        assertThat(simpleConfig.get("A", "defaultValue")).isEqualTo("defaultValue");
+        assertThat(simpleConfig.getInteger("foobar", 456)).isEqualTo(123);
+        assertThat(simpleConfig.getInteger("A", 456)).isEqualTo(456);
     }
 
     @Test
@@ -67,4 +79,10 @@ class LibraryTest {
         assertThat(simpleConfig.get("Foo.Bar")).isEqualTo("aha");
     }
 
+    @Test
+    void progressivelyRefinePropertySet() throws Exception {
+        simpleConfig.load(Map.of("a", "b"));
+        Function<ConfigSource, Map<String, String>> refinement = configSource -> Map.of("foobar", configSource.get("a"));
+        simpleConfig.load(refinement);
+    }
 }

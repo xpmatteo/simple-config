@@ -10,13 +10,42 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Function;
 
-public class SimpleConfig {
+public class SimpleConfig implements ConfigSource {
     static String WORKING_DIRECTORY = System.getProperty("user.dir");
     private Map<String, String> map = new HashMap<>();
 
+    @Override
     public String get(String propertyName) {
-        return map.get(formatKey(propertyName));
+        String formattedKey = formatKey(propertyName);
+        if (!map.containsKey(formattedKey)) {
+            throw new SimpleConfig.PropertyNotFound(formattedKey);
+        }
+        return map.get(formattedKey);
+    }
+
+    @Override
+    public String get(String propertyName, String defaultValue) {
+        String formattedKey = formatKey(propertyName);
+        if (!map.containsKey(formattedKey)) {
+            return defaultValue;
+        }
+        return map.get(formattedKey);
+    }
+
+    @Override
+    public Integer getInteger(String propertyName) {
+        return Integer.valueOf(get(propertyName));
+    }
+
+    @Override
+    public Integer getInteger(String propertyName, int defaultValue) {
+        String formattedKey = formatKey(propertyName);
+        if (!map.containsKey(formattedKey)) {
+            return defaultValue;
+        }
+        return getInteger(formattedKey);
     }
 
     public SimpleConfig load(String localPath) throws IOException {
@@ -38,11 +67,17 @@ public class SimpleConfig {
         return this;
     }
 
+    public SimpleConfig load(Function<ConfigSource, Map<String, String>> refinement) {
+        return this;
+    }
+
     private String formatKey(String key) {
         return key.toLowerCase(Locale.getDefault()).replaceAll("_", ".");
     }
 
-    public Integer getInteger(String propertyName) {
-        return Integer.valueOf(get(propertyName));
+    public static class PropertyNotFound extends RuntimeException {
+        public PropertyNotFound(String formattedKey) {
+            super(String.format("No property \"%s\" found", formattedKey));
+        }
     }
 }
