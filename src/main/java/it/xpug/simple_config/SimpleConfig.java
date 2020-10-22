@@ -6,6 +6,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Properties;
 
 public class SimpleConfig {
@@ -21,6 +22,10 @@ public class SimpleConfig {
     public SimpleConfig load(Path path) throws IOException {
         BufferedReader reader = Files.newBufferedReader(path, Charset.defaultCharset());
         properties.load(reader);
+        return this;
+    }
+
+    public SimpleConfig load(Map<String, String> map) {
         return this;
     }
 }
