@@ -10,27 +10,61 @@ import java.nio.file.Paths;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class LibraryTest {
 
     private static final Path APP_PROPERTIES = Paths.get(System.getProperty("user.dir"), "fixture", "application.properties");
+    private SimpleConfig simpleConfig = new SimpleConfig();
 
     @Test
     void getAProperty() throws Exception {
-        SimpleConfig simpleConfig = new SimpleConfig().load(APP_PROPERTIES);
+        simpleConfig.load(APP_PROPERTIES);
+
+        assertThat(simpleConfig.get("foo.bar")).isEqualTo("baz");
+    }
+
+    @Test
+    void getWillNeverReturnNull() throws Exception {
+
+    }
+
+    @Test
+    void getIntegerProperty() throws Exception {
+        simpleConfig.load(APP_PROPERTIES);
+
+        assertThat(simpleConfig.getInteger("fooBar")).isEqualTo(123);
+    }
+
+    @Test
+    void loadFileRelativeToLocalDirectory() throws Exception {
+        SimpleConfig.WORKING_DIRECTORY = System.getProperty("user.dir") + "/fixture";
+        simpleConfig.load("application.properties");
 
         assertThat(simpleConfig.get("foo.bar")).isEqualTo("baz");
     }
 
     @Test
     void overridePropertiesWithEnvVariables() throws Exception {
-        SimpleConfig simpleConfig = new SimpleConfig()
+        simpleConfig
                 .load(APP_PROPERTIES)
-                .load(Map.of("FOO_BAR", "aha"))
+                .load(Map.of("foo.bar", "aha"))
                 ;
 
         assertThat(simpleConfig.get("foo.bar")).isEqualTo("aha");
+    }
+
+    @Test
+    void convertEnvStyleToPropertiesStyle() throws Exception {
+        simpleConfig.load(Map.of("FOO_BAR", "aha"));
+
+        assertThat(simpleConfig.get("foo.bar")).isEqualTo("aha");
+    }
+
+    @Test
+    void normalizeGetPropertyToo() throws Exception {
+        simpleConfig.load(Map.of("foo_bar", "aha"));
+
+        assertThat(simpleConfig.get("Foo.Bar")).isEqualTo("aha");
     }
 
 }
