@@ -80,7 +80,14 @@ class SimpleConfigTest {
     }
 
     @Test
-    void progressivelyRefinePropertySet() throws Exception {
+    void loadFromClasspath() throws Exception {
+        simpleConfig.loadFromClasspath("/test-in-classpath.properties");
+
+        assertThat(simpleConfig.get("abc")).isEqualTo("def");
+    }
+
+    @Test
+    void progressivelyRefineProperties() throws Exception {
         simpleConfig.load(Map.of("a", "b"));
 
         simpleConfig.load(configSource -> Map.of("c", configSource.get("a")));
